@@ -12,7 +12,7 @@
 			<img class="title-icon" src="../../assets/huayu/right-icon.png" />
 		</div>
 
-		<img class="new-img" src="../../assets/huayu/banner-bg.jpg" />
+		<img v-if="purchaseList.length>=0" class="new-img" :src="purchaseList[0].pic" @click="goUrl(purchaseList[0].wap_url)" />
 
 		<div class="title-line">
 			<img class="title-icon" src="../../assets/huayu/left-icon.png" />
@@ -39,9 +39,9 @@
 				<img class="title-icon" src="../../assets/huayu/right-icon.png" />
 			</div>
 			<img class="new-img" src="../../assets/huayu/banner-bg.jpg" />
-			<div class="flexrow " style="flex-wrap: wrap;width: 90%;margin: 0 auto;">
+			<div class="flexrow " style="flex-wrap: wrap;width: 94%;margin: 0 auto;">
 				<div style="width:50%;">
-					<div class="flexcolumn box-line" style="margin: 10px;padding: 7px;background: #F7F7F7;">
+					<div class="flexcolumn box-line" style="margin: 10px;padding: 0.11rem;background: #F7F7F7;">
 						<img class="box-item-img2" src="../../assets/images/assemble.jpg" />
 						<div class="shop-title" style="font-size: 0.32rem;margin-top: 7px;">混合坚果灌装礼盒</div>
 						<div class="shop-price" style="font-size:0.01rem ;margin-top: 2px;">原价：¥238</div>
@@ -54,7 +54,7 @@
 					</div>
 				</div>
 				<div style="width:50%;">
-					<div class="flexcolumn box-line" style="margin: 10px;padding: 7px;background: #F7F7F7;">
+					<div class="flexcolumn box-line" style="margin: 10px;padding: 0.11rem;background: #F7F7F7;">
 						<img class="box-item-img2" src="../../assets/images/assemble.jpg" />
 						<div class="shop-title" style="font-size: 0.32rem;margin-top: 7px;">混合坚果灌装礼盒</div>
 						<div class="shop-price" style="font-size:0.01rem ;margin-top: 2px;">原价：¥238</div>
@@ -67,7 +67,7 @@
 					</div>
 				</div>
 				<div style="width:50%;">
-					<div class="flexcolumn box-line" style="margin: 10px;padding: 7px;background: #F7F7F7;">
+					<div class="flexcolumn box-line" style="margin: 10px;padding: 0.11rem;background: #F7F7F7;">
 						<img class="box-item-img2" src="../../assets/images/assemble.jpg" />
 						<div class="shop-title" style="font-size: 0.32rem;margin-top: 7px;">混合坚果灌装礼盒</div>
 						<div class="shop-price" style="font-size:0.01rem ;margin-top: 2px;">原价：¥238</div>
@@ -81,7 +81,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="flex flexrow" style="justify-content: space-around;width: 90%;margin: 10px auto;">
+		<div class="flex flexrow" style="justify-content: space-around;width: 92%;margin: 10px auto;">
 			<div class="flex flexcolumn box-line more-item flexac">
 				<div>购物须知</div>
 				<div style="margin-top: 4px;font-size: 0.2rem;font-weight: 400;">点击了解更多>></div>
@@ -92,7 +92,7 @@
 			</div>
 		</div>
 		<div class="flex flexcolumn box-line" style="padding: 7px; width: 85%;margin: 10px auto;">
-			<div class="flexrow flexac card-item" style="margin-top: 10px;" v-for="(item, index) in cardList">
+			<div class="flexrow flexac card-item" style="margin-top: 10px;" v-for="(item, index) in cardList" @click="goUrl(item.url)">
 				<img style="width: 3.22rem;height: 2.22rem;" v-bind:src="item.imageUrl" />
 				<div class="flexcolumn" style="margin-left: 10px;">
 					<div>{{item.title}}</div>
@@ -104,6 +104,28 @@
 </template>
 
 <script>
+	import {
+		getHomeData,
+	} from "@api/public";
+	import cookie from "@utils/store/cookie";
+	import {
+		getSeckillConfig,
+		getSeckillList
+	} from "@api/activity";
+	import {
+		isWeixin
+	} from "@utils/index";
+	import {
+		openShareAll,
+		wxShowLocation
+	} from "@libs/wechat";
+	import {
+		goShopDetail
+	} from "@libs/order";
+	const MAPKEY = "mapKey";
+	const HAS_COUPON_WINDOW = "has_coupon_window";
+	const LONGITUDE = "user_longitude";
+	const LATITUDE = "user_latitude";
 	export default {
 		data: function() {
 			return {
@@ -111,21 +133,110 @@
 				classificationList: [{}, {}, {}],
 				cardList: [{
 					imageUrl: require('../../assets/huayu/card1.png'),
-					title: '工银女性行用卡光芒系列Plus版 '
+					title: '工银女性行用卡光芒系列Plus版 ',
+					url: 'https://elife.icbc.com.cn/OFSTCARD/creditCard/apply.do?channel=109HSXFHSXF000100000000000&paraPromoCode=EW888001091661HSXF1&coreCode=HZDW000070462 '
 				}, {
 					imageUrl: require('../../assets/huayu/card2.png'),
-					title: '工银微信信用卡'
+					title: '工银微信信用卡',
+					url: 'https://elife.icbc.com.cn/OFSTCARD/creditCard/apply.do?channel=109HSXFHSXF000100000000000&paraPromoCode=EW888001091661HSXF1&coreCode=HZDW000046964'
 				}, {
 					imageUrl: require('../../assets/huayu/card3.png'),
-					title: '工银长隆卡'
+					title: '工银长隆卡',
+					url: 'https://elife.icbc.com.cn/OFSTCARD/creditCard/apply.do?channel=109HSXFHSXF000100000000000&paraPromoCode=EW888001091661HSXF1&coreCode=HZDW000002961 '
 				}]
 			};
 		},
+	
+		
 		mounted: function() {
-
+			let that = this;
+			getHomeData().then(res => {
+				that.mapKey = res.data.tengxun_map_key;
+				cookie.set(MAPKEY, that.mapKey);
+				that.$set(that, "purchaseList", res.data.banner);
+				that.subscribe = res.data.subscribe;
+				if (!that.subscribe && that.followUrl) {
+					setTimeout(function() {
+						that.followHid = true;
+					}, 200);
+				} else {
+					that.followHid = false;
+				}
+				if (res.data.site_name) document.title = res.data.site_name;
+				this.showCoupon = !cookie.has(HAS_COUPON_WINDOW) &&
+					res.data.couponList.some(coupon => coupon.is_use);
+				if (!cookie.get(LATITUDE) && !cookie.get(LONGITUDE)) this.getWXLocation();
+			});
+		
+			getSeckillConfig().then(res => {
+						  console.log(res)
+			  // that.$set(that, "timeList", res.data.seckillTime);
+			  // that.$set(that, "active", res.data.seckillTimeIndex);
+			  // that.datatime = that.timeList[that.active].stop;
+			  // that.loadingList = false;
+			  // that.getSeckillList();
+			
+			});
 		},
-		methods: {
 
+		methods: {
+			
+			
+			getSeckillList: function() {
+			  var that = this;
+			  var time = that.timeList[that.active].id;
+			  getSeckillList(time, { page: that.page, limit: that.limit })
+			    .then(res => {
+			      that.status = res.data.length < that.limit;
+			      that.seckillList.push.apply(that.seckillList, res.data);
+			      that.page++;
+			      that.loadingList = false;
+			    })
+			    .catch(() => {
+			      that.loadingList = false;
+			    });
+			},
+			
+			goUrl(url) {
+
+				let newStr = url.indexOf("http") === 0;
+				if (newStr) {
+					window.location.href = url;
+				} else {
+					this.$router.push({
+						path: url
+					});
+				}
+			},
+
+			getWXLocation() {
+				if (isWeixin()) {
+					wxShowLocation();
+				} else {
+					if (!this.mapKey)
+						console.log("暂无法使用查看地图，请配置您的腾讯地图key");
+					let loc;
+					// if (_this.$route.params.mapKey) _this.locationShow = true;
+					//监听定位组件的message事件
+					window.addEventListener(
+						"message",
+						function(event) {
+							loc = event.data; // 接收位置信息 LONGITUDE
+							console.log("location", loc);
+							if (loc && loc.module == "geolocation") {
+								cookie.set(LATITUDE, loc.lat);
+								cookie.set(LONGITUDE, loc.lng);
+							} else {
+								cookie.remove(LATITUDE);
+								cookie.remove(LONGITUDE);
+								//定位组件在定位失败后，也会触发message, event.data为null
+								console.log("定位失败");
+							}
+						},
+						false
+					);
+				}
+			},
 		}
 	};
 </script>
@@ -192,15 +303,15 @@
 	}
 
 	.box-item-img {
-		width: 80px;
-		height: 80px;
+		width: 2rem;
+		height: 2rem;
 		border-radius: 10px;
 	}
 
 	.box-item-img2 {
-		width: 120px;
-		height: 120px;
-		padding: 10px;
+		width: 2.8rem;
+		height: 2.8rem;
+		padding: 0.2rem;
 		margin: 0 auto;
 		background-color: #FFFFFF;
 		border-radius: 10px;
