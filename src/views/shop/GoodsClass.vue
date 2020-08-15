@@ -88,6 +88,7 @@ export default {
     },
     loadCategoryData() {
       getCategory().then(res => {
+        console.log(res);
         this.category = res.data;
         this.$nextTick(() => {
           if (this.$route.params.pid) this.activeCateId(this.$route.params.pid);
